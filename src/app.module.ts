@@ -10,6 +10,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { StylesModule } from './modules/styles/styles.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { StylesModule } from './modules/styles/styles.module';
         synchronize: config.get<string>('TYPEORM_SYNC') === 'true',
       }),
     }),
+    AuthModule,
     CategoriesModule,
     ProductsModule,
     ReviewsModule,

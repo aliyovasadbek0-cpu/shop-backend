@@ -8,7 +8,12 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRole } from '../../common/enums/user-role.enum';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { ProductsService } from './products.service';
 import { ReviewsService } from '../reviews/reviews.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -39,6 +44,8 @@ export class ProductsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
@@ -54,6 +61,7 @@ export class ProductsController {
   }
 
   @Post(':id/reviews')
+  @UseGuards(AuthGuard('jwt'))
   addProductReview(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateReviewForProductDto,
@@ -67,6 +75,8 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductDto,
@@ -75,6 +85,8 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }

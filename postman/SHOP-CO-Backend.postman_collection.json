@@ -2,11 +2,11 @@
   "info": {
     "_postman_id": "a1b2c3d4-shop-co-backend",
     "name": "SHOP.CO Backend (NestJS + TypeORM)",
-    "description": "Figma SHOP.CO backend — barcha API lar. ID lar butun son (1, 2, 3…). `baseUrl` va ID larni o‘zgaruvchilardan to‘ldiring; savat uchun `sessionId` yoki `x-cart-session` header.",
+    "description": "Figma SHOP.CO backend. **Auth:** `POST /auth/login` → `access_token` ni `accessToken` o‘zgaruvchisiga yozing. Admin **POST/PATCH/DELETE** so‘rovlarida header: `Authorization: Bearer {{accessToken}}`. Super admin: `superadmin@shop.co` / `1234` (birinchi ishga tushishda yaratiladi). **GET** lar token talab qilmaydi.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "baseUrl", "value": "https://shop-backend-production-862d.up.railway.app/api" },
     { "key": "categoryId", "value": "1" },
     { "key": "productId", "value": "1" },
     { "key": "variantId", "value": "1" },
@@ -14,7 +14,8 @@
     { "key": "cartItemId", "value": "1" },
     { "key": "orderId", "value": "1" },
     { "key": "subscriberId", "value": "1" },
-    { "key": "sessionId", "value": "" }
+    { "key": "sessionId", "value": "" },
+    { "key": "accessToken", "value": "" }
   ],
   "item": [
     {
@@ -26,6 +27,60 @@
             "method": "GET",
             "header": [],
             "url": "{{baseUrl}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (user)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"password\": \"secret12\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login superadmin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@shop.co\",\n  \"password\": \"1234\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Create admin (superadmin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@shop.co\",\n  \"password\": \"adminpass12\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/admins"
           }
         }
       ]
@@ -45,7 +100,10 @@
           "name": "Create category",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"T-shirts\"\n}"
@@ -65,7 +123,10 @@
           "name": "Update category",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"T-Shirts\"\n}"
@@ -77,7 +138,9 @@
           "name": "Delete category",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/categories/{{categoryId}}"
           }
         }
@@ -130,7 +193,10 @@
           "name": "Create product",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"T-shirt with Tape Details\",\n  \"description\": \"Comfortable cotton tee.\",\n  \"price\": 260,\n  \"discountPercentage\": 20,\n  \"rating\": 4.5,\n  \"stockQuantity\": 100,\n  \"images\": [\n    \"https://example.com/img1.jpg\"\n  ],\n  \"style\": \"Casual\",\n  \"categoryId\": null\n}"
@@ -166,7 +232,10 @@
           "name": "Add review to product",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Alex\",\n  \"rating\": 5,\n  \"comment\": \"Great quality!\",\n  \"isVerified\": true\n}"
@@ -178,7 +247,10 @@
           "name": "Update product",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"T-shirt with Tape Details (updated)\",\n  \"stockQuantity\": 80\n}"
@@ -190,7 +262,9 @@
           "name": "Delete product",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/products/{{productId}}"
           }
         }
@@ -211,7 +285,10 @@
           "name": "Create variant",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"color\": \"Green\",\n  \"size\": \"Large\",\n  \"stockQuantity\": 25\n}"
@@ -231,7 +308,10 @@
           "name": "Update variant",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"color\": \"Blue\",\n  \"stockQuantity\": 30\n}"
@@ -243,7 +323,9 @@
           "name": "Delete variant",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/products/{{productId}}/variants/{{variantId}}"
           }
         }
@@ -272,7 +354,10 @@
           "name": "Create review (optional productId)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Sarah M.\",\n  \"rating\": 5,\n  \"comment\": \"Love the quality!\",\n  \"isVerified\": true,\n  \"isFeatured\": true,\n  \"reviewedAt\": \"2026-05-01\",\n  \"productId\": null\n}"
@@ -292,7 +377,10 @@
           "name": "Update review",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"isFeatured\": true,\n  \"rating\": 5\n}"
@@ -304,7 +392,9 @@
           "name": "Delete review",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/reviews/{{reviewId}}"
           }
         }
@@ -425,7 +515,9 @@
           "name": "List orders",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/orders"
           }
         },
@@ -433,7 +525,9 @@
           "name": "Get order by id",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/orders/{{orderId}}"
           }
         },
@@ -441,7 +535,10 @@
           "name": "Update order",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"paid\",\n  \"email\": \"buyer@example.com\"\n}"
@@ -453,7 +550,9 @@
           "name": "Delete order",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/orders/{{orderId}}"
           }
         }
@@ -478,7 +577,10 @@
           "name": "Subscribers — create",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"another@example.com\"\n}"
@@ -490,7 +592,9 @@
           "name": "Subscribers — list",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/subscribers"
           }
         },
@@ -498,7 +602,9 @@
           "name": "Subscribers — get by id",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/subscribers/{{subscriberId}}"
           }
         },
@@ -506,7 +612,10 @@
           "name": "Subscribers — update",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"newemail@example.com\"\n}"
@@ -518,7 +627,9 @@
           "name": "Subscribers — delete",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
             "url": "{{baseUrl}}/subscribers/{{subscriberId}}"
           }
         }
