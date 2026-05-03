@@ -22,7 +22,7 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const user = await this.users.createUser(
-      dto.email,
+      dto.login,
       dto.password,
       UserRole.USER,
     );
@@ -30,13 +30,13 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.users.findByEmail(dto.email);
+    const user = await this.users.findByLogin(dto.login);
     if (!user) {
-      throw new UnauthorizedException('Email yoki parol noto‘g‘ri');
+      throw new UnauthorizedException('Login yoki parol noto‘g‘ri');
     }
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) {
-      throw new UnauthorizedException('Email yoki parol noto‘g‘ri');
+      throw new UnauthorizedException('Login yoki parol noto‘g‘ri');
     }
     return this.buildTokenResponse(user);
   }
@@ -46,23 +46,23 @@ export class AuthService {
       throw new ForbiddenException('Faqat super admin yangi admin yarata oladi');
     }
     const user = await this.users.createUser(
-      dto.email,
+      dto.login,
       dto.password,
       UserRole.ADMIN,
     );
-    return { id: user.id, email: user.email, role: user.role };
+    return { id: user.id, login: user.login, role: user.role };
   }
 
   private buildTokenResponse(user: User) {
     const payload: JwtPayload = {
       sub: user.id,
-      email: user.email,
+      login: user.login,
       role: user.role,
     };
     const access_token = this.jwt.sign(payload);
     return {
       access_token,
-      user: { id: user.id, email: user.email, role: user.role },
+      user: { id: user.id, login: user.login, role: user.role },
     };
   }
 }

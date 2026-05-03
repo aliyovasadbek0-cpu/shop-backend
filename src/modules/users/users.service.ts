@@ -18,6 +18,10 @@ export class UsersService {
     private readonly config: ConfigService,
   ) {}
 
+  private normalizeLogin(login: string): string {
+    return login.trim().toLowerCase();
+  }
+
   async ensureSuperAdmin(): Promise<void> {
     const has = await this.repo.findOne({
       where: { role: UserRole.SUPER_ADMIN },
@@ -25,15 +29,14 @@ export class UsersService {
     });
     if (has) return;
 
-    const email = this.config
-      .get<string>('SUPER_ADMIN_EMAIL', 'superadmin@shop.co')
-      .trim()
-      .toLowerCase();
+    const login = this.normalizeLogin(
+      this.config.get<string>('SUPER_ADMIN_LOGIN', 'superadmin'),
+    );
     const password = this.config.get<string>('SUPER_ADMIN_PASSWORD', '1234');
     const passwordHash = await bcrypt.hash(password, 10);
     await this.repo.save(
       this.repo.create({
-        email,
+        login,
         passwordHash,
         role: UserRole.SUPER_ADMIN,
       }),
@@ -41,31 +44,31 @@ export class UsersService {
   }
 
   async createUser(
-    email: string,
+    login: string,
     password: string,
     role: UserRole,
   ): Promise<User> {
-    const normalized = email.trim().toLowerCase();
+    const normalized = this.normalizeLogin(login);
     const dup = await this.repo.findOne({
-      where: { email: normalized },
+      where: { login: normalized },
       select: ['id'],
     });
     if (dup) {
-      throw new ConflictException('Bu email allaqachon band.');
+      throw new ConflictException('Bu login allaqachon band.');
     }
     const passwordHash = await bcrypt.hash(password, 10);
     return this.repo.save(
       this.repo.create({
-        email: normalized,
+        login: normalized,
         passwordHash,
         role,
       }),
     );
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByLogin(login: string): Promise<User | null> {
     return this.repo.findOne({
-      where: { email: email.trim().toLowerCase() },
+      where: { login: this.normalizeLogin(login) },
     });
   }
 

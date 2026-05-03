@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-shop-co-backend",
     "name": "SHOP.CO Backend (NestJS + TypeORM)",
-    "description": "Figma SHOP.CO backend. **Auth:** `POST /auth/login` → `access_token` ni `accessToken` o‘zgaruvchisiga yozing. Admin **POST/PATCH/DELETE** so‘rovlarida header: `Authorization: Bearer {{accessToken}}`. Super admin: `superadmin@shop.co` / `1234` (birinchi ishga tushishda yaratiladi). **GET** lar token talab qilmaydi.",
+    "description": "Figma SHOP.CO backend. **Auth:** `POST /auth/login` body: `login` + `password` (email yo‘q). Token: `accessToken`. Admin POST/PATCH/DELETE: `Authorization: Bearer {{accessToken}}`. Super: login `superadmin`, parol `1234`. **GET** lar ochiq.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -41,7 +41,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"password\": \"secret12\"\n}"
+              "raw": "{\n  \"login\": \"buyer_one\",\n  \"password\": \"secret12\"\n}"
             },
             "url": "{{baseUrl}}/auth/register"
           }
@@ -53,7 +53,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"superadmin@shop.co\",\n  \"password\": \"1234\"\n}"
+              "raw": "{\n  \"login\": \"superadmin\",\n  \"password\": \"1234\"\n}"
             },
             "url": "{{baseUrl}}/auth/login"
           }
@@ -78,7 +78,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@shop.co\",\n  \"password\": \"adminpass12\"\n}"
+              "raw": "{\n  \"login\": \"shop_admin\",\n  \"password\": \"adminpass12\"\n}"
             },
             "url": "{{baseUrl}}/auth/admins"
           }

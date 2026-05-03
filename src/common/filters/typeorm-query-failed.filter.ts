@@ -102,6 +102,8 @@ export class TypeOrmQueryFailedFilter implements ExceptionFilter {
         return `Bu nomdagi kategoriya allaqachon bor: "${value}". Boshqa nom tanlang.`;
       case 'subscribers':
         return `Bu email allaqachon ro'yxatdan o'tgan: "${value}".`;
+      case 'users':
+        return `Bu login allaqachon band: "${value}". Boshqa login tanlang.`;
       case 'products':
         return `Bu mahsulot bo'yicha takrorlanmas maydon (${field}) band. Qiymat: "${value}".`;
       default:

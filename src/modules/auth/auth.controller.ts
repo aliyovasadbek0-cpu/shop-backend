@@ -17,7 +17,7 @@ import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';
 
 type AuthedRequest = Request & {
-  user: { id: number; email: string; role: UserRole };
+  user: { id: number; login: string; role: UserRole };
 };
 
 @Controller('auth')
@@ -46,7 +46,7 @@ export class AuthController {
   me(@Req() req: AuthedRequest) {
     return {
       id: req.user.id,
-      email: req.user.email,
+      login: req.user.login,
       role: req.user.role,
     };
   }

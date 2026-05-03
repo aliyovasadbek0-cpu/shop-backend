@@ -11,8 +11,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  /** Yagona login (email emas) */
   @Column({ unique: true })
-  email: string;
+  login: string;
 
   @Column()
   passwordHash: string;
