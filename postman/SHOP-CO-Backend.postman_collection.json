@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-shop-co-backend",
     "name": "SHOP.CO Backend (NestJS + TypeORM)",
-    "description": "Figma SHOP.CO backend. **Auth:** `POST /auth/login` body: `login` + `password` (email yo‘q). Token: `accessToken`. Admin POST/PATCH/DELETE: `Authorization: Bearer {{accessToken}}`. Super: login `superadmin`, parol `1234`. **GET** lar ochiq.",
+    "description": "Figma SHOP.CO backend. **Auth:** `POST /auth/register` — token yo‘q, faqat `{ id, login, role }`. Token faqat `POST /auth/login` dan (`access_token`). Admin POST/PATCH/DELETE: `Authorization: Bearer {{accessToken}}`. Super: `superadmin` / `1234`. **GET** lar ochiq.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

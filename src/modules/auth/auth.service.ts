@@ -26,7 +26,7 @@ export class AuthService {
       dto.password,
       UserRole.USER,
     );
-    return this.buildTokenResponse(user);
+    return { id: user.id, login: user.login, role: user.role };
   }
 
   async login(dto: LoginDto) {
